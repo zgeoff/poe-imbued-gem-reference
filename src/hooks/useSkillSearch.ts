@@ -24,6 +24,8 @@ export interface UseSkillSearchReturn {
   results: SkillGem[];
   isExpanded: (name: string) => boolean;
   toggleExpanded: (name: string) => void;
+  expandedCount: number;
+  collapseAll: () => void;
 }
 
 function parseHash(): HashState {
@@ -225,6 +227,19 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
 
   const isExpanded = useCallback((name: string) => expanded.has(name), [expanded]);
 
+  const collapseAll = useCallback(() => {
+    setExpanded(new Set());
+    const state: HashState = {
+      query: queryRef.current,
+      expanded: new Set(),
+      colorFilter: colorFilterRef.current,
+      searchSupports: searchSupportsRef.current,
+      sortBy: sortByRef.current,
+      sortDir: sortDirRef.current,
+    };
+    updateHash(state, false);
+  }, [updateHash]);
+
   // Fuse.js search — lazy-loaded
   const [fuse, setFuse] = useState<Awaited<ReturnType<typeof buildSearchIndex>> | null>(null);
   const fuseSkillsRef = useRef(skills);
@@ -283,5 +298,7 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
     results,
     isExpanded,
     toggleExpanded,
+    expandedCount: expanded.size,
+    collapseAll,
   };
 }

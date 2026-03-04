@@ -1,4 +1,4 @@
-import { Github } from 'lucide-react';
+import { ChevronsDownUp, Github } from 'lucide-react';
 import { useMemo } from 'react';
 import { ColorFilter } from '@/components/ColorFilter';
 import { SearchBar } from '@/components/SearchBar';
@@ -23,6 +23,8 @@ export default function App() {
     results,
     isExpanded,
     toggleExpanded,
+    expandedCount,
+    collapseAll,
   } = useSkillSearch(skills);
   const { pinnedNames, isPinned, togglePin, unpin } = usePinnedSkills();
 
@@ -81,7 +83,18 @@ export default function App() {
           />
           <div className="flex items-center justify-between">
             <ColorFilter activeColor={colorFilter} onColorChange={setColorFilter} />
-            <SortControl sortBy={sortBy} sortDir={sortDir} onSortChange={setSortBy} />
+            <div className="flex gap-2 items-center">
+              <button
+                type="button"
+                onClick={collapseAll}
+                disabled={expandedCount === 0}
+                className="px-3 py-1 rounded-full text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f] text-muted-foreground enabled:hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronsDownUp size={14} className="inline -mt-0.5 mr-1" />
+                Collapse All
+              </button>
+              <SortControl sortBy={sortBy} sortDir={sortDir} onSortChange={setSortBy} />
+            </div>
           </div>
         </div>
         <main>
