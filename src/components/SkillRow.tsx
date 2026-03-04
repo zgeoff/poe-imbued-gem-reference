@@ -20,9 +20,12 @@ export const SkillRow = memo(function SkillRow({
   onTogglePin,
 }: SkillRowProps) {
   const contentRef = useRef<HTMLDivElement>(null);
+  const wasExpandedRef = useRef(isExpanded);
 
   useEffect(() => {
-    if (isExpanded && contentRef.current?.scrollIntoView) {
+    const wasExpanded = wasExpandedRef.current;
+    wasExpandedRef.current = isExpanded;
+    if (isExpanded && !wasExpanded && contentRef.current?.scrollIntoView) {
       const motionOk = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       contentRef.current.scrollIntoView({
         behavior: motionOk ? 'smooth' : 'auto',

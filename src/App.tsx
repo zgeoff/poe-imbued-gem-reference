@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { ColorFilter } from '@/components/ColorFilter';
 import { SearchBar } from '@/components/SearchBar';
 import { SkillList } from '@/components/SkillList';
+import { SortControl } from '@/components/SortControl';
 import { useGemData } from '@/hooks/useGemData';
 import { usePinnedSkills } from '@/hooks/usePinnedSkills';
 import { useSkillSearch } from '@/hooks/useSkillSearch';
@@ -16,6 +17,9 @@ export default function App() {
     setColorFilter,
     searchSupports,
     setSearchSupports,
+    sortBy,
+    sortDir,
+    setSortBy,
     results,
     isExpanded,
     toggleExpanded,
@@ -66,7 +70,10 @@ export default function App() {
             searchSupports={searchSupports}
             onSearchSupportsChange={setSearchSupports}
           />
-          <ColorFilter activeColor={colorFilter} onColorChange={setColorFilter} />
+          <div className="flex items-center justify-between">
+            <ColorFilter activeColor={colorFilter} onColorChange={setColorFilter} />
+            <SortControl sortBy={sortBy} sortDir={sortDir} onSortChange={setSortBy} />
+          </div>
         </div>
         <main>
           <SkillList

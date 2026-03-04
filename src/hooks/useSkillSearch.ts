@@ -1,12 +1,14 @@
 import { startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { buildSearchIndex } from '@/lib/search';
-import type { GemColor, SkillGem } from '@/types';
+import type { GemColor, SkillGem, SortBy, SortDir } from '@/types';
 
 interface HashState {
   query: string;
   expanded: Set<string>;
   colorFilter: GemColor | 'all';
   searchSupports: boolean;
+  sortBy: SortBy;
+  sortDir: SortDir;
 }
 
 export interface UseSkillSearchReturn {
@@ -16,6 +18,9 @@ export interface UseSkillSearchReturn {
   setColorFilter: (color: GemColor | 'all') => void;
   searchSupports: boolean;
   setSearchSupports: (value: boolean) => void;
+  sortBy: SortBy;
+  sortDir: SortDir;
+  setSortBy: (sort: SortBy) => void;
   results: SkillGem[];
   isExpanded: (name: string) => boolean;
   toggleExpanded: (name: string) => void;
@@ -29,6 +34,8 @@ function parseHash(): HashState {
     expanded: new Set(params.getAll('e')),
     colorFilter: (params.get('c') as GemColor | 'all') ?? 'all',
     searchSupports: params.get('s') === '1',
+    sortBy: (params.get('sort') as SortBy) ?? 'name',
+    sortDir: (params.get('dir') as SortDir) ?? 'asc',
   };
 }
 
@@ -38,6 +45,8 @@ function buildHash(state: HashState): string {
   for (const e of state.expanded) params.append('e', e);
   if (state.colorFilter !== 'all') params.set('c', state.colorFilter);
   if (state.searchSupports) params.set('s', '1');
+  if (state.sortBy !== 'name') params.set('sort', state.sortBy);
+  if (state.sortDir !== 'asc') params.set('dir', state.sortDir);
   const str = params.toString();
   return str ? `#?${str}` : '';
 }
@@ -49,6 +58,8 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
   const [debouncedQuery, setDebouncedQuery] = useState(initial.query);
   const [colorFilter, setColorFilterRaw] = useState<GemColor | 'all'>(initial.colorFilter);
   const [searchSupports, setSearchSupportsRaw] = useState(initial.searchSupports);
+  const [sortBy, setSortByRaw] = useState<SortBy>(initial.sortBy);
+  const [sortDir, setSortDirRaw] = useState<SortDir>(initial.sortDir);
   const [expanded, setExpanded] = useState<Set<string>>(initial.expanded);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -85,10 +96,14 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
   const queryRef = useRef(query);
   const colorFilterRef = useRef(colorFilter);
   const searchSupportsRef = useRef(searchSupports);
+  const sortByRef = useRef(sortBy);
+  const sortDirRef = useRef(sortDir);
   useEffect(() => {
     queryRef.current = query;
     colorFilterRef.current = colorFilter;
     searchSupportsRef.current = searchSupports;
+    sortByRef.current = sortBy;
+    sortDirRef.current = sortDir;
   });
 
   // Listen for popstate/hashchange (back/forward)
@@ -99,6 +114,8 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
       setDebouncedQuery(parsed.query);
       setColorFilterRaw(parsed.colorFilter);
       setSearchSupportsRaw(parsed.searchSupports);
+      setSortByRaw(parsed.sortBy);
+      setSortDirRaw(parsed.sortDir);
       setExpanded(parsed.expanded);
     };
     window.addEventListener('hashchange', onHashChange);
@@ -117,6 +134,8 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
         expanded: expandedRef.current,
         colorFilter: colorFilterRef.current,
         searchSupports: searchSupportsRef.current,
+        sortBy: sortByRef.current,
+        sortDir: sortDirRef.current,
       };
       updateHash(state, true);
     },
@@ -131,6 +150,8 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
         expanded: expandedRef.current,
         colorFilter: color,
         searchSupports: searchSupportsRef.current,
+        sortBy: sortByRef.current,
+        sortDir: sortDirRef.current,
       };
       updateHash(state, false);
     },
@@ -151,6 +172,7 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
           expanded: next,
           colorFilter: colorFilterRef.current,
           searchSupports: searchSupportsRef.current,
+          sortBy: sortByRef.current,
         };
         updateHash(state, false);
         return next;
@@ -167,6 +189,34 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
         expanded: expandedRef.current,
         colorFilter: colorFilterRef.current,
         searchSupports: value,
+        sortBy: sortByRef.current,
+        sortDir: sortDirRef.current,
+      };
+      updateHash(state, false);
+    },
+    [updateHash],
+  );
+
+  const setSortBy = useCallback(
+    (sort: SortBy) => {
+      let newDir: SortDir;
+      if (sort === sortByRef.current) {
+        // Same button: toggle direction
+        newDir = sortDirRef.current === 'asc' ? 'desc' : 'asc';
+      } else {
+        // Different button: sensible default
+        newDir = sort === 'name' ? 'asc' : 'desc';
+      }
+      setSortByRaw(sort);
+      setSortDirRaw(newDir);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const state: HashState = {
+        query: queryRef.current,
+        expanded: expandedRef.current,
+        colorFilter: colorFilterRef.current,
+        searchSupports: searchSupportsRef.current,
+        sortBy: sort,
+        sortDir: newDir,
       };
       updateHash(state, false);
     },
@@ -208,8 +258,17 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
       filtered = filtered.filter((s) => s.color === colorFilter);
     }
 
+    const dir = sortDir === 'asc' ? 1 : -1;
+    if (sortBy === 'supports') {
+      filtered.sort(
+        (a, b) => dir * (a.supports.length - b.supports.length) || a.name.localeCompare(b.name),
+      );
+    } else if (!debouncedQuery.trim()) {
+      filtered.sort((a, b) => dir * a.name.localeCompare(b.name));
+    }
+
     return filtered;
-  }, [skills, debouncedQuery, colorFilter, fuse]);
+  }, [skills, debouncedQuery, colorFilter, fuse, sortBy, sortDir]);
 
   return {
     query,
@@ -218,6 +277,9 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
     setColorFilter,
     searchSupports,
     setSearchSupports,
+    sortBy,
+    sortDir,
+    setSortBy,
     results,
     isExpanded,
     toggleExpanded,

@@ -18,4 +18,7 @@ export interface SearchableSkill {
   supports: string;
 }
 
+export type SortBy = 'name' | 'supports';
+export type SortDir = 'asc' | 'desc';
+
 export type GemData = Record<GemColor, Record<string, string[]>>;
