@@ -1,0 +1,6 @@
+# Ignore everything
+*
+
+# Except these
+!.gitignore
+!poe_skill_support_compatibility.json
