@@ -9,8 +9,17 @@ import { useSkillSearch } from '@/hooks/useSkillSearch';
 
 export default function App() {
   const { skills, loading, error } = useGemData();
-  const { query, setQuery, colorFilter, setColorFilter, results, isExpanded, toggleExpanded } =
-    useSkillSearch(skills);
+  const {
+    query,
+    setQuery,
+    colorFilter,
+    setColorFilter,
+    searchSupports,
+    setSearchSupports,
+    results,
+    isExpanded,
+    toggleExpanded,
+  } = useSkillSearch(skills);
   const { pinnedNames, isPinned, togglePin, unpin } = usePinnedSkills();
 
   const pinnedSkills = useMemo(
@@ -51,7 +60,12 @@ export default function App() {
           </p>
         </header>
         <div className="sticky top-0 z-10 bg-[#0a0a0f] pt-3 pb-3 space-y-3">
-          <SearchBar query={query} onQueryChange={setQuery} />
+          <SearchBar
+            query={query}
+            onQueryChange={setQuery}
+            searchSupports={searchSupports}
+            onSearchSupportsChange={setSearchSupports}
+          />
           <ColorFilter activeColor={colorFilter} onColorChange={setColorFilter} />
         </div>
         <main>

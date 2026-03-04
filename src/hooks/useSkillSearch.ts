@@ -6,6 +6,7 @@ interface HashState {
   query: string;
   expanded: Set<string>;
   colorFilter: GemColor | 'all';
+  searchSupports: boolean;
 }
 
 export interface UseSkillSearchReturn {
@@ -13,6 +14,8 @@ export interface UseSkillSearchReturn {
   setQuery: (query: string) => void;
   colorFilter: GemColor | 'all';
   setColorFilter: (color: GemColor | 'all') => void;
+  searchSupports: boolean;
+  setSearchSupports: (value: boolean) => void;
   results: SkillGem[];
   isExpanded: (name: string) => boolean;
   toggleExpanded: (name: string) => void;
@@ -25,6 +28,7 @@ function parseHash(): HashState {
     query: params.get('q') ?? '',
     expanded: new Set(params.getAll('e')),
     colorFilter: (params.get('c') as GemColor | 'all') ?? 'all',
+    searchSupports: params.get('s') === '1',
   };
 }
 
@@ -33,6 +37,7 @@ function buildHash(state: HashState): string {
   if (state.query) params.set('q', state.query);
   for (const e of state.expanded) params.append('e', e);
   if (state.colorFilter !== 'all') params.set('c', state.colorFilter);
+  if (state.searchSupports) params.set('s', '1');
   const str = params.toString();
   return str ? `#?${str}` : '';
 }
@@ -43,6 +48,7 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
   const [query, setQueryRaw] = useState(initial.query);
   const [debouncedQuery, setDebouncedQuery] = useState(initial.query);
   const [colorFilter, setColorFilterRaw] = useState<GemColor | 'all'>(initial.colorFilter);
+  const [searchSupports, setSearchSupportsRaw] = useState(initial.searchSupports);
   const [expanded, setExpanded] = useState<Set<string>>(initial.expanded);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -78,9 +84,11 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
   // We need refs for the latest state so the hashchange listener always sees current values
   const queryRef = useRef(query);
   const colorFilterRef = useRef(colorFilter);
+  const searchSupportsRef = useRef(searchSupports);
   useEffect(() => {
     queryRef.current = query;
     colorFilterRef.current = colorFilter;
+    searchSupportsRef.current = searchSupports;
   });
 
   // Listen for popstate/hashchange (back/forward)
@@ -90,6 +98,7 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
       setQueryRaw(parsed.query);
       setDebouncedQuery(parsed.query);
       setColorFilterRaw(parsed.colorFilter);
+      setSearchSupportsRaw(parsed.searchSupports);
       setExpanded(parsed.expanded);
     };
     window.addEventListener('hashchange', onHashChange);
@@ -107,6 +116,7 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
         query: q,
         expanded: expandedRef.current,
         colorFilter: colorFilterRef.current,
+        searchSupports: searchSupportsRef.current,
       };
       updateHash(state, true);
     },
@@ -120,6 +130,7 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
         query: queryRef.current,
         expanded: expandedRef.current,
         colorFilter: color,
+        searchSupports: searchSupportsRef.current,
       };
       updateHash(state, false);
     },
@@ -139,10 +150,25 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
           query: queryRef.current,
           expanded: next,
           colorFilter: colorFilterRef.current,
+          searchSupports: searchSupportsRef.current,
         };
         updateHash(state, false);
         return next;
       });
+    },
+    [updateHash],
+  );
+
+  const setSearchSupports = useCallback(
+    (value: boolean) => {
+      setSearchSupportsRaw(value);
+      const state: HashState = {
+        query: queryRef.current,
+        expanded: expandedRef.current,
+        colorFilter: colorFilterRef.current,
+        searchSupports: value,
+      };
+      updateHash(state, false);
     },
     [updateHash],
   );
@@ -155,7 +181,7 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
   useEffect(() => {
     fuseSkillsRef.current = skills;
     let cancelled = false;
-    buildSearchIndex(skills).then((index) => {
+    buildSearchIndex(skills, searchSupports).then((index) => {
       if (!cancelled && fuseSkillsRef.current === skills) {
         setFuse(index);
       }
@@ -163,7 +189,7 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
     return () => {
       cancelled = true;
     };
-  }, [skills]);
+  }, [skills, searchSupports]);
 
   const results = useMemo(() => {
     let filtered: SkillGem[];
@@ -185,5 +211,15 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
     return filtered;
   }, [skills, debouncedQuery, colorFilter, fuse]);
 
-  return { query, setQuery, colorFilter, setColorFilter, results, isExpanded, toggleExpanded };
+  return {
+    query,
+    setQuery,
+    colorFilter,
+    setColorFilter,
+    searchSupports,
+    setSearchSupports,
+    results,
+    isExpanded,
+    toggleExpanded,
+  };
 }

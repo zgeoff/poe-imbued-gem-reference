@@ -1,7 +1,10 @@
 import type Fuse from 'fuse.js';
 import type { SearchableSkill, SkillGem } from '@/types';
 
-export async function buildSearchIndex(skills: SkillGem[]): Promise<Fuse<SearchableSkill>> {
+export async function buildSearchIndex(
+  skills: SkillGem[],
+  searchSupports: boolean,
+): Promise<Fuse<SearchableSkill>> {
   const { default: Fuse } = await import('fuse.js');
 
   const searchableSkills: SearchableSkill[] = skills.map((s) => ({
@@ -10,11 +13,13 @@ export async function buildSearchIndex(skills: SkillGem[]): Promise<Fuse<Searcha
     supports: s.supports.join(' '),
   }));
 
+  const keys: Fuse.IFuseOptions<SearchableSkill>['keys'] = [{ name: 'name', weight: 2 }];
+  if (searchSupports) {
+    keys.push({ name: 'supports', weight: 1 });
+  }
+
   return new Fuse(searchableSkills, {
-    keys: [
-      { name: 'name', weight: 2 },
-      { name: 'supports', weight: 1 },
-    ],
+    keys,
     threshold: 0.3,
     distance: 100,
     minMatchCharLength: 1,

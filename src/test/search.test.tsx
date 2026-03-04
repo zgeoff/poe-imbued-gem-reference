@@ -13,7 +13,7 @@ describe('Search', () => {
     const user = userEvent.setup();
     render(<App />);
     await screen.findByText('Arc');
-    const input = screen.getByPlaceholderText('Search skills or supports...');
+    const input = screen.getByPlaceholderText('Search skills…');
     await user.type(input, 'Arc');
     await waitFor(() => {
       expect(screen.getByText('Arc')).toBeInTheDocument();
@@ -24,7 +24,9 @@ describe('Search', () => {
     const user = userEvent.setup();
     render(<App />);
     await screen.findByText('Arc');
-    const input = screen.getByPlaceholderText('Search skills or supports...');
+    // Enable support searching
+    await user.click(screen.getByLabelText('Include supports'));
+    const input = screen.getByPlaceholderText('Search skills…');
     await user.type(input, 'Multistrike');
     // Cleave and Cyclone both have Multistrike Support
     await waitFor(() => {
@@ -37,7 +39,7 @@ describe('Search', () => {
     const user = userEvent.setup();
     render(<App />);
     await screen.findByText('Arc');
-    const input = screen.getByPlaceholderText('Search skills or supports...');
+    const input = screen.getByPlaceholderText('Search skills…');
     await user.type(input, 'Cyclon');
     await waitFor(() => {
       expect(screen.getByText('Cyclone')).toBeInTheDocument();
@@ -48,7 +50,7 @@ describe('Search', () => {
     const user = userEvent.setup();
     render(<App />);
     await screen.findByText('Arc');
-    const input = screen.getByPlaceholderText('Search skills or supports...');
+    const input = screen.getByPlaceholderText('Search skills…');
     await user.type(input, 'Arc');
     await waitFor(() => {
       expect(screen.queryByText('Cleave')).not.toBeInTheDocument();
@@ -64,14 +66,15 @@ describe('Search', () => {
     const user = userEvent.setup();
     render(<App />);
     await screen.findByText('Arc');
-    // Filter to blue first
-    await user.click(screen.getByText('Blue'));
+    // Enable support searching and filter to blue
+    await user.click(screen.getByLabelText('Include supports'));
+    await user.click(screen.getByText('Int'));
     await waitFor(() => {
       expect(screen.queryByText('Cleave')).not.toBeInTheDocument();
       expect(screen.getByText('Arc')).toBeInTheDocument();
     });
-    // Now search for something that matches across colors
-    const input = screen.getByPlaceholderText('Search skills or supports...');
+    // Now search for a support that matches across colors
+    const input = screen.getByPlaceholderText('Search skills…');
     await user.type(input, 'Faster Casting');
     // Only blue skills with "Faster Casting" should remain
     await waitFor(() => {
@@ -85,7 +88,7 @@ describe('Search', () => {
     const user = userEvent.setup();
     render(<App />);
     await screen.findByText('Arc');
-    const input = screen.getByPlaceholderText('Search skills or supports...');
+    const input = screen.getByPlaceholderText('Search skills…');
     // Type rapidly
     await user.type(input, 'Cleave');
     // Results should eventually settle
