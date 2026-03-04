@@ -5,7 +5,7 @@ pre-commit:
       glob: "*.{ts,tsx,js,jsx,json}"
       run: bunx biome check --no-errors-on-unmatched {staged_files}
     typecheck:
-      run: bunx tsc --noEmit
+      run: bunx tsc -b
 
 commit-msg:
   commands:

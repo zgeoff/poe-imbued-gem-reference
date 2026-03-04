@@ -12,7 +12,7 @@ describe('URL Hash', () => {
   it('loads app with hash and restores search query', async () => {
     window.location.hash = '#?q=arc';
     render(<App />);
-    const input = await screen.findByPlaceholderText('Search skills or supports...');
+    const input = await screen.findByPlaceholderText('Search skills…');
     expect(input).toHaveValue('arc');
     expect(await screen.findByText('Arc')).toBeInTheDocument();
   });
@@ -31,7 +31,7 @@ describe('URL Hash', () => {
     const user = userEvent.setup();
     render(<App />);
     await screen.findByText('Arc');
-    const input = screen.getByPlaceholderText('Search skills or supports...');
+    const input = screen.getByPlaceholderText('Search skills…');
     await user.type(input, 'cleave');
     await waitFor(() => {
       expect(window.location.hash).toContain('q=cleave');
@@ -42,7 +42,7 @@ describe('URL Hash', () => {
     const user = userEvent.setup();
     render(<App />);
     await screen.findByText('Arc');
-    await user.click(screen.getByText('Blue'));
+    await user.click(screen.getByText('Int'));
     await waitFor(() => {
       expect(window.location.hash).toContain('c=blue');
     });

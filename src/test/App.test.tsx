@@ -11,7 +11,7 @@ beforeEach(() => {
 describe('App', () => {
   it('renders loading state then skill list', async () => {
     render(<App />);
-    expect(screen.getByText('Loading gem data...')).toBeInTheDocument();
+    expect(screen.getByText('Loading gem data…')).toBeInTheDocument();
     expect(await screen.findByText('Arc')).toBeInTheDocument();
   });
 
@@ -74,7 +74,7 @@ describe('App', () => {
     const user = userEvent.setup();
     render(<App />);
     await screen.findByText('Arc');
-    await user.click(screen.getByText('Red'));
+    await user.click(screen.getByText('Str'));
     // Red skills should be visible
     expect(screen.getByText('Cleave')).toBeInTheDocument();
     // Blue skills should be hidden
@@ -88,7 +88,7 @@ describe('App', () => {
     const user = userEvent.setup();
     render(<App />);
     await screen.findByText('Arc');
-    const input = screen.getByPlaceholderText('Search skills or supports...');
+    const input = screen.getByPlaceholderText('Search skills…');
     await user.type(input, 'xyznonexistent');
     expect(await screen.findByText('No matching skills found')).toBeInTheDocument();
   });
@@ -99,7 +99,7 @@ describe('App', () => {
     await screen.findByText('Arc');
     // Find the pin button for Arc
     const pinButtons = screen.getAllByLabelText('Pin');
-    await user.click(pinButtons[0]); // Pin the first skill (Arc)
+    await user.click(pinButtons[0]!); // Pin the first skill (Arc)
     expect(await screen.findByText('Pinned (1)')).toBeInTheDocument();
   });
 
@@ -109,10 +109,10 @@ describe('App', () => {
     await screen.findByText('Arc');
     // Pin Arc
     const pinButtons = screen.getAllByLabelText('Pin');
-    await user.click(pinButtons[0]);
+    await user.click(pinButtons[0]!);
     expect(await screen.findByText('Pinned (1)')).toBeInTheDocument();
     // Search for something else
-    const input = screen.getByPlaceholderText('Search skills or supports...');
+    const input = screen.getByPlaceholderText('Search skills…');
     await user.type(input, 'Cleave');
     // Pinned section should still be visible
     await waitFor(() => {
@@ -126,10 +126,10 @@ describe('App', () => {
     await screen.findByText('Arc');
     // Pin Arc
     const pinButtons = screen.getAllByLabelText('Pin');
-    await user.click(pinButtons[0]);
+    await user.click(pinButtons[0]!);
     expect(await screen.findByText('Pinned (1)')).toBeInTheDocument();
     // Unpin it
-    const unpinButton = screen.getAllByLabelText('Unpin')[0];
+    const unpinButton = screen.getAllByLabelText('Unpin')[0]!;
     await user.click(unpinButton);
     await waitFor(() => {
       expect(screen.queryByText('Pinned (1)')).not.toBeInTheDocument();
@@ -142,7 +142,7 @@ describe('App', () => {
     await screen.findByText('Arc');
     // Pin Arc
     const pinButtons = screen.getAllByLabelText('Pin');
-    await user.click(pinButtons[0]);
+    await user.click(pinButtons[0]!);
     const pinnedHeader = await screen.findByText('Pinned (1)');
     // Collapse
     await user.click(pinnedHeader);

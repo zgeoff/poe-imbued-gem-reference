@@ -175,6 +175,7 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
           colorFilter: colorFilterRef.current,
           searchSupports: searchSupportsRef.current,
           sortBy: sortByRef.current,
+          sortDir: sortDirRef.current,
         };
         updateHash(state, false);
         return next;
