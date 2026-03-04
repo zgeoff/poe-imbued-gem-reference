@@ -4,6 +4,9 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  define: {
+    __BUILD_TIME__: JSON.stringify(Date.now().toString()),
+  },
   plugins: [react(), tailwindcss()],
   server: {
     allowedHosts: ['.ts.net'],

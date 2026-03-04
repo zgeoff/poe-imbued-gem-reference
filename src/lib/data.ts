@@ -22,7 +22,8 @@ export function flattenGemData(data: GemData): SkillGem[] {
 }
 
 export async function loadGemData(): Promise<SkillGem[]> {
-  const res = await fetch(`${import.meta.env.BASE_URL}data.json`);
+  const cacheBuster = typeof __BUILD_TIME__ !== 'undefined' ? `?v=${__BUILD_TIME__}` : '';
+  const res = await fetch(`${import.meta.env.BASE_URL}data.json${cacheBuster}`);
   const data: GemData = await res.json();
   return flattenGemData(data);
 }
