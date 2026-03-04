@@ -35,7 +35,7 @@ export function PinnedSection({
 
   return (
     <Collapsible open={!collapsed} onOpenChange={handleOpenChange}>
-      <CollapsibleTrigger className="w-full flex items-center gap-2 py-2 px-4 text-sm font-medium text-[#8b7a2e]">
+      <CollapsibleTrigger className="w-full flex items-center gap-2 py-2 px-4 text-sm font-medium text-[#8b7a2e] focus-visible:ring-2 focus-visible:ring-ring">
         <span>{collapsed ? '\u25b8' : '\u25be'}</span>
         Pinned ({pinnedSkills.length})
       </CollapsibleTrigger>

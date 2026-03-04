@@ -28,7 +28,7 @@ export function ColorFilter({ activeColor, onColorChange }: ColorFilterProps) {
           type="button"
           key={f.value}
           onClick={() => onColorChange(f.value)}
-          className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+          className={`px-3 py-1 rounded-full text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f] ${
             activeColor !== f.value ? 'text-muted-foreground hover:text-foreground' : ''
           }`}
           style={activeColor === f.value ? ACTIVE_STYLES[f.value] : undefined}

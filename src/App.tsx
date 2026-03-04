@@ -20,7 +20,9 @@ export default function App() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
-        <p className="text-[#6b6a63]">Loading gem data...</p>
+        <p className="text-[#6b6a63]" aria-live="polite">
+          Loading gem data…
+        </p>
       </div>
     );
   }
@@ -28,7 +30,9 @@ export default function App() {
   if (error) {
     return (
       <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
-        <p className="text-red-400">Error: {error}</p>
+        <p className="text-red-400" aria-live="polite">
+          Error: {error}
+        </p>
       </div>
     );
   }
@@ -37,8 +41,10 @@ export default function App() {
     <div className="min-h-screen bg-[#0a0a0f]">
       <div className="max-w-2xl mx-auto px-4">
         <header className="py-6">
-          <h1 className="text-2xl font-semibold text-[#e8e4d8]">Imbued</h1>
-          <p className="text-sm text-[#6b6a63] hidden sm:block">PoE2 Gem Compatibility Reference</p>
+          <h1 className="text-2xl font-semibold text-[#e8e4d8] text-balance">Imbued</h1>
+          <p className="sr-only sm:not-sr-only sm:text-sm sm:text-[#6b6a63]">
+            PoE2 Gem Compatibility Reference
+          </p>
         </header>
         <div className="sticky top-0 z-10 bg-[#0a0a0f] pt-3 pb-3 space-y-3">
           <SearchBar query={query} onQueryChange={setQuery} />

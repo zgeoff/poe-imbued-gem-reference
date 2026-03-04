@@ -27,6 +27,9 @@ export function SkillList({
 
   return (
     <div>
+      <span className="sr-only" aria-live="polite">
+        {filteredSkills.length + pinnedSkills.length} results
+      </span>
       <PinnedSection
         pinnedSkills={pinnedSkills}
         isExpanded={isExpanded}

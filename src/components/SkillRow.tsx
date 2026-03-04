@@ -23,7 +23,11 @@ export const SkillRow = memo(function SkillRow({
 
   useEffect(() => {
     if (isExpanded && contentRef.current?.scrollIntoView) {
-      contentRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      const motionOk = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      contentRef.current.scrollIntoView({
+        behavior: motionOk ? 'smooth' : 'auto',
+        block: 'nearest',
+      });
     }
   }, [isExpanded]);
 
@@ -37,7 +41,7 @@ export const SkillRow = memo(function SkillRow({
           <CollapsibleTrigger asChild>
             <button
               type="button"
-              className="flex-1 flex items-center justify-between py-3 sm:py-2.5 px-4 hover:bg-[#1a1a2a] transition-colors text-left min-w-0"
+              className="flex-1 flex items-center justify-between py-3 sm:py-2.5 px-4 hover:bg-[#1a1a2a] transition-colors text-left min-w-0 focus-visible:ring-2 focus-visible:ring-ring"
             >
               <div className="flex items-center gap-2 min-w-0">
                 <span className="text-muted-foreground text-xs">
@@ -46,7 +50,9 @@ export const SkillRow = memo(function SkillRow({
                 <span className="text-[#c8c4b8] font-medium truncate">{skill.name}</span>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-muted-foreground text-sm">[{skill.supports.length}]</span>
+                <span className="text-muted-foreground text-sm tabular-nums">
+                  [{skill.supports.length}]
+                </span>
                 <span
                   className="w-2 h-2 rounded-full"
                   style={{ backgroundColor: GEM_COLORS[skill.color] }}
@@ -60,7 +66,7 @@ export const SkillRow = memo(function SkillRow({
               e.stopPropagation();
               onTogglePin(skill.name);
             }}
-            className={`px-3 py-1 text-xs shrink-0 ${isPinned ? 'text-[#8b7a2e]' : 'text-muted-foreground hover:text-foreground'}`}
+            className={`px-3 py-1 text-xs shrink-0 focus-visible:ring-2 focus-visible:ring-ring ${isPinned ? 'text-[#8b7a2e]' : 'text-muted-foreground hover:text-foreground'}`}
             aria-label={isPinned ? 'Unpin' : 'Pin'}
           >
             {isPinned ? 'pinned' : 'pin'}
