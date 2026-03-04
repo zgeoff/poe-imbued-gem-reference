@@ -5,6 +5,9 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  server: {
+    allowedHosts: ['.ts.net'],
+  },
   base: '/poe-imbued-gems/',
   build: {
     outDir: 'docs',
