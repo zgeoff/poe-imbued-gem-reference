@@ -6,7 +6,7 @@ export function flattenGemData(data: GemData): SkillGem[] {
     const colorData = data[color];
     if (colorData) {
       for (const [name, supports] of Object.entries(colorData)) {
-        skills.push({ name, color, supports });
+        skills.push({ name, color, supports: [...supports].sort((a, b) => a.localeCompare(b)) });
       }
     }
   }
