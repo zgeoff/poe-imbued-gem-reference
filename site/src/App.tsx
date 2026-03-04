@@ -1,41 +1,14 @@
 import { useGemData } from '@/hooks/useGemData';
-import { useSearch } from '@/hooks/useSearch';
-import { useHashState } from '@/hooks/useHashState';
+import { useSkillSearch } from '@/hooks/useSkillSearch';
 import { usePinnedSkills } from '@/hooks/usePinnedSkills';
 import { SearchBar } from '@/components/SearchBar';
 import { ColorFilter } from '@/components/ColorFilter';
 import { SkillList } from '@/components/SkillList';
-import { useEffect, useRef } from 'react';
 
 export default function App() {
   const { skills, loading, error } = useGemData();
-  const { hashState, setQuery: setHashQuery, toggleExpanded, setColorFilter: setHashColor, isExpanded } = useHashState();
-  const { query, setQuery, colorFilter, setColorFilter, results } = useSearch(skills);
+  const { query, setQuery, colorFilter, setColorFilter, results, isExpanded, toggleExpanded } = useSkillSearch(skills);
   const { pinnedNames, isPinned, togglePin, unpin } = usePinnedSkills();
-  const syncedFromHash = useRef(false);
-
-  // Sync hash state to search state whenever hashState changes (supports back/forward)
-  useEffect(() => {
-    // On mount, always sync. After mount, sync when hash changes from popstate.
-    if (!syncedFromHash.current) {
-      if (hashState.query) setQuery(hashState.query);
-      if (hashState.colorFilter !== 'all') setColorFilter(hashState.colorFilter);
-      syncedFromHash.current = true;
-    } else {
-      setQuery(hashState.query);
-      setColorFilter(hashState.colorFilter);
-    }
-  }, [hashState.query, hashState.colorFilter]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleQueryChange = (q: string) => {
-    setQuery(q);
-    setHashQuery(q);
-  };
-
-  const handleColorChange = (c: typeof colorFilter) => {
-    setColorFilter(c);
-    setHashColor(c);
-  };
 
   const pinnedSkills = skills.filter((s) => pinnedNames.has(s.name));
 
@@ -63,8 +36,8 @@ export default function App() {
           <p className="text-sm text-[#6b6a63] hidden sm:block">PoE2 Gem Compatibility Reference</p>
         </header>
         <div className="sticky top-0 z-10 bg-[#0a0a0f] pt-3 pb-3 space-y-3">
-          <SearchBar query={query} onQueryChange={handleQueryChange} />
-          <ColorFilter activeColor={colorFilter} onColorChange={handleColorChange} />
+          <SearchBar query={query} onQueryChange={setQuery} />
+          <ColorFilter activeColor={colorFilter} onColorChange={setColorFilter} />
         </div>
         <main>
           <SkillList

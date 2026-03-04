@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { SupportPills } from '@/components/SupportPills';
+import { GEM_COLORS } from '@/types';
 import type { SkillGem } from '@/types';
 
 interface SkillRowProps {
@@ -15,18 +16,14 @@ export function SkillRow({ skill, isExpanded, onToggleExpand, isPinned, onToggle
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isExpanded && contentRef.current && contentRef.current.scrollIntoView) {
+    if (isExpanded && contentRef.current?.scrollIntoView) {
       contentRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [isExpanded]);
 
   return (
     <Collapsible open={isExpanded} onOpenChange={onToggleExpand}>
-      <div className={`relative border-l-4 ${
-        skill.color === 'red' ? 'border-l-[#c24b38]' :
-        skill.color === 'green' ? 'border-l-[#3b9b47]' :
-        'border-l-[#4169c9]'
-      }`}>
+      <div className={`relative border-l-4`} style={{ borderLeftColor: GEM_COLORS[skill.color] }}>
         <div className="flex items-center">
           <CollapsibleTrigger asChild>
             <button className="flex-1 flex items-center justify-between py-3 sm:py-2.5 px-4 hover:bg-[#1a1a2a] transition-colors text-left min-w-0">
@@ -36,11 +33,7 @@ export function SkillRow({ skill, isExpanded, onToggleExpand, isPinned, onToggle
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <span className="text-muted-foreground text-sm">[{skill.supports.length}]</span>
-                <span className={`w-2 h-2 rounded-full ${
-                  skill.color === 'red' ? 'bg-[#c24b38]' :
-                  skill.color === 'green' ? 'bg-[#3b9b47]' :
-                  'bg-[#4169c9]'
-                }`} />
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: GEM_COLORS[skill.color] }} />
               </div>
             </button>
           </CollapsibleTrigger>

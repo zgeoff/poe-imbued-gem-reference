@@ -1,3 +1,4 @@
+import { GEM_COLORS } from '@/types';
 import type { GemColor } from '@/types';
 
 interface ColorFilterProps {
@@ -12,11 +13,11 @@ const FILTERS: { label: string; value: GemColor | 'all' }[] = [
   { label: 'Blue', value: 'blue' },
 ];
 
-const ACTIVE_COLORS: Record<string, string> = {
-  all: 'bg-[#8b7a2e] text-[#e8e4d8]',
-  red: 'bg-[#c24b38] text-white',
-  green: 'bg-[#3b9b47] text-white',
-  blue: 'bg-[#4169c9] text-white',
+const ACTIVE_STYLES: Record<string, { backgroundColor: string; color: string }> = {
+  all: { backgroundColor: '#8b7a2e', color: '#e8e4d8' },
+  red: { backgroundColor: GEM_COLORS.red, color: 'white' },
+  green: { backgroundColor: GEM_COLORS.green, color: 'white' },
+  blue: { backgroundColor: GEM_COLORS.blue, color: 'white' },
 };
 
 export function ColorFilter({ activeColor, onColorChange }: ColorFilterProps) {
@@ -27,10 +28,11 @@ export function ColorFilter({ activeColor, onColorChange }: ColorFilterProps) {
           key={f.value}
           onClick={() => onColorChange(f.value)}
           className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-            activeColor === f.value
-              ? ACTIVE_COLORS[f.value]
-              : 'text-muted-foreground hover:text-foreground'
+            activeColor !== f.value
+              ? 'text-muted-foreground hover:text-foreground'
+              : ''
           }`}
+          style={activeColor === f.value ? ACTIVE_STYLES[f.value] : undefined}
         >
           {f.label}
         </button>
