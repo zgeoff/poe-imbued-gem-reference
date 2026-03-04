@@ -270,21 +270,19 @@ export function useSkillSearch(skills: SkillGem[]): UseSkillSearchReturn {
       filtered = [...skills];
     }
 
-    if (colorFilter !== 'all') {
-      filtered = filtered.filter((s) => s.color === colorFilter);
-    }
-
     const dir = sortDir === 'asc' ? 1 : -1;
-    if (sortBy === 'supports') {
+    if (sortBy === 'red' || sortBy === 'green' || sortBy === 'blue') {
       filtered.sort(
-        (a, b) => dir * (a.supports.length - b.supports.length) || a.name.localeCompare(b.name),
+        (a, b) =>
+          dir * (a.supports[sortBy].length - b.supports[sortBy].length) ||
+          a.name.localeCompare(b.name),
       );
     } else if (!debouncedQuery.trim()) {
       filtered.sort((a, b) => dir * a.name.localeCompare(b.name));
     }
 
     return filtered;
-  }, [skills, debouncedQuery, colorFilter, fuse, sortBy, sortDir]);
+  }, [skills, debouncedQuery, fuse, sortBy, sortDir]);
 
   return {
     query,

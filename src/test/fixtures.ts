@@ -2,30 +2,50 @@ import type { GemData } from '@/types';
 
 export const testGemData: GemData = {
   red: {
-    Cleave: ['Melee Physical Damage Support', 'Multistrike Support', 'Ruthless Support'],
-    'Shield Charge': ['Faster Attacks Support', 'Fortify Support'],
+    Cleave: [
+      { name: 'Melee Physical Damage Support', color: 'red' },
+      { name: 'Ruthless Support', color: 'red' },
+      { name: 'Multistrike Support', color: 'green' },
+    ],
+    'Shield Charge': [
+      { name: 'Faster Attacks Support', color: 'green' },
+      { name: 'Fortify Support', color: 'red' },
+    ],
     Automation: [],
   },
   green: {
-    Cyclone: ['Melee Physical Damage Support', 'Multistrike Support', 'Faster Attacks Support'],
-    Poisonstrike: ['Added Chaos Damage Support', 'Void Manipulation Support'],
-    'Rain of Arrows': ['Added Lightning Damage Support', 'Faster Attacks Support'],
+    Cyclone: [
+      { name: 'Melee Physical Damage Support', color: 'red' },
+      { name: 'Multistrike Support', color: 'green' },
+      { name: 'Faster Attacks Support', color: 'green' },
+    ],
+    Poisonstrike: [
+      { name: 'Added Chaos Damage Support', color: 'blue' },
+      { name: 'Void Manipulation Support', color: 'green' },
+    ],
+    'Rain of Arrows': [
+      { name: 'Added Lightning Damage Support', color: 'blue' },
+      { name: 'Faster Attacks Support', color: 'green' },
+    ],
   },
   blue: {
     Arc: [
-      'Added Lightning Damage Support',
-      'Spell Echo Support',
-      'Faster Casting Support',
-      'Inspiration Support',
-      'Controlled Destruction Support',
-      'Lightning Penetration Support',
+      { name: 'Added Lightning Damage Support', color: 'blue' },
+      { name: 'Spell Echo Support', color: 'blue' },
+      { name: 'Faster Casting Support', color: 'blue' },
+      { name: 'Inspiration Support', color: 'blue' },
+      { name: 'Controlled Destruction Support', color: 'blue' },
+      { name: 'Lightning Penetration Support', color: 'blue' },
     ],
     'Ball Lightning': [
-      'Spell Echo Support',
-      'Slower Projectiles Support',
-      'Controlled Destruction Support',
+      { name: 'Spell Echo Support', color: 'blue' },
+      { name: 'Slower Projectiles Support', color: 'green' },
+      { name: 'Controlled Destruction Support', color: 'blue' },
     ],
-    'Maelstr\u00f6m': ['Concentrated Effect Support'],
-    Frostbolt: ['Faster Casting Support', 'Greater Multiple Projectiles Support'],
+    'Maelstr\u00f6m': [{ name: 'Concentrated Effect Support', color: 'blue' }],
+    Frostbolt: [
+      { name: 'Faster Casting Support', color: 'blue' },
+      { name: 'Greater Multiple Projectiles Support', color: 'green' },
+    ],
   },
 };

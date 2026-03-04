@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { SkillRow } from '@/components/SkillRow';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import type { SkillGem } from '@/types';
+import type { GemColor, SkillGem } from '@/types';
 
 interface PinnedSectionProps {
   pinnedSkills: SkillGem[];
   isExpanded: (name: string) => boolean;
   onToggleExpand: (name: string) => void;
   onUnpin: (name: string) => void;
+  colorFilter: GemColor | 'all';
 }
 
 const COLLAPSED_KEY = 'imbued-pinned-collapsed';
@@ -17,6 +18,7 @@ export function PinnedSection({
   isExpanded,
   onToggleExpand,
   onUnpin,
+  colorFilter,
 }: PinnedSectionProps) {
   const [collapsed, setCollapsed] = useState(() => {
     try {
@@ -56,6 +58,7 @@ export function PinnedSection({
             onToggleExpand={onToggleExpand}
             isPinned={true}
             onTogglePin={onUnpin}
+            colorFilter={colorFilter}
           />
         ))}
       </CollapsibleContent>

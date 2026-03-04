@@ -5,8 +5,15 @@ export function flattenGemData(data: GemData): SkillGem[] {
   for (const color of ['red', 'green', 'blue'] as GemColor[]) {
     const colorData = data[color];
     if (colorData) {
-      for (const [name, supports] of Object.entries(colorData)) {
-        skills.push({ name, color, supports: [...supports].sort((a, b) => a.localeCompare(b)) });
+      for (const [name, supportGems] of Object.entries(colorData)) {
+        const supports: Record<GemColor, string[]> = { red: [], green: [], blue: [] };
+        for (const sg of supportGems) {
+          supports[sg.color].push(sg.name);
+        }
+        for (const c of ['red', 'green', 'blue'] as GemColor[]) {
+          supports[c].sort((a, b) => a.localeCompare(b));
+        }
+        skills.push({ name, color, supports });
       }
     }
   }

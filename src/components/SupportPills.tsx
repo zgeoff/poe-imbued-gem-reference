@@ -1,23 +1,40 @@
 import { Badge } from '@/components/ui/badge';
 import type { GemColor } from '@/types';
+import { GEM_COLORS } from '@/types';
 
 interface SupportPillsProps {
-  supports: string[];
-  color: GemColor;
+  supports: Record<GemColor, string[]>;
+  colorFilter: GemColor | 'all';
 }
 
-export function SupportPills({ supports, color }: SupportPillsProps) {
-  if (supports.length === 0) {
+const COLOR_ORDER: GemColor[] = ['red', 'green', 'blue'];
+
+export function SupportPills({ supports, colorFilter }: SupportPillsProps) {
+  const visibleColors = colorFilter === 'all' ? COLOR_ORDER : [colorFilter];
+  const hasAny = visibleColors.some((c) => supports[c].length > 0);
+
+  if (!hasAny) {
     return <p className="text-muted-foreground text-sm">No compatible supports</p>;
   }
 
   return (
-    <div className="flex flex-wrap gap-1.5 sm:gap-2">
-      {supports.map((support) => (
-        <Badge key={support} variant="secondary" className={`gem-pill-${color}`}>
-          {support.replace(/ Support$/, '')}
-        </Badge>
-      ))}
+    <div className="space-y-2">
+      {visibleColors.map((color) => {
+        if (supports[color].length === 0) return null;
+        return (
+          <div key={color} className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
+            <span
+              className="w-2 h-2 rounded-full shrink-0"
+              style={{ backgroundColor: GEM_COLORS[color] }}
+            />
+            {supports[color].map((support) => (
+              <Badge key={support} variant="secondary" className={`gem-pill-${color}`}>
+                {support.replace(/ Support$/, '')}
+              </Badge>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 }

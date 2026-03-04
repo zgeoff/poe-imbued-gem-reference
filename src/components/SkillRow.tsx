@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef } from 'react';
 import { SupportPills } from '@/components/SupportPills';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import type { SkillGem } from '@/types';
+import type { GemColor, SkillGem } from '@/types';
 import { GEM_COLORS } from '@/types';
 
 interface SkillRowProps {
@@ -10,6 +10,7 @@ interface SkillRowProps {
   onToggleExpand: (name: string) => void;
   isPinned: boolean;
   onTogglePin: (name: string) => void;
+  colorFilter: GemColor | 'all';
 }
 
 export const SkillRow = memo(function SkillRow({
@@ -18,6 +19,7 @@ export const SkillRow = memo(function SkillRow({
   onToggleExpand,
   isPinned,
   onTogglePin,
+  colorFilter,
 }: SkillRowProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const wasExpandedRef = useRef(isExpanded);
@@ -59,8 +61,22 @@ export const SkillRow = memo(function SkillRow({
                 <span className="text-[#c8c4b8] font-medium truncate">{skill.name}</span>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-muted-foreground text-sm tabular-nums">
-                  [{skill.supports.length}]
+                <span className="text-sm tabular-nums text-muted-foreground">
+                  {'['}
+                  {(['red', 'green', 'blue'] as const).map((c, i) => (
+                    <span key={c}>
+                      {i > 0 && '|'}
+                      <span
+                        style={{
+                          color: GEM_COLORS[c],
+                          opacity: colorFilter !== 'all' && colorFilter !== c ? 0.3 : 1,
+                        }}
+                      >
+                        {skill.supports[c].length}
+                      </span>
+                    </span>
+                  ))}
+                  {']'}
                 </span>
                 <span
                   className="w-2 h-2 rounded-full"
@@ -100,7 +116,7 @@ export const SkillRow = memo(function SkillRow({
         </div>
         <CollapsibleContent>
           <div ref={contentRef} className="px-4 pt-2 pb-3">
-            <SupportPills supports={skill.supports} color={skill.color} />
+            <SupportPills supports={skill.supports} colorFilter={colorFilter} />
           </div>
         </CollapsibleContent>
       </div>

@@ -66,21 +66,21 @@ describe('Search', () => {
     const user = userEvent.setup();
     render(<App />);
     await screen.findByText('Arc');
-    // Enable support searching and filter to blue
+    // Enable support searching
     await user.click(screen.getByLabelText('Include supports'));
-    await user.click(screen.getByText('Int'));
-    await waitFor(() => {
-      expect(screen.queryByText('Cleave')).not.toBeInTheDocument();
-      expect(screen.getByText('Arc')).toBeInTheDocument();
-    });
-    // Now search for a support that matches across colors
+    // Search for a support
     const input = screen.getByPlaceholderText('Search skills…');
     await user.type(input, 'Faster Casting');
-    // Only blue skills with "Faster Casting" should remain
+    // Arc and Frostbolt have "Faster Casting Support"
     await waitFor(() => {
       expect(screen.getByText('Arc')).toBeInTheDocument();
       expect(screen.getByText('Frostbolt')).toBeInTheDocument();
-      expect(screen.queryByText('Cleave')).not.toBeInTheDocument();
+    });
+    // Apply blue filter - skills should still be visible (color filter affects support rows, not skills)
+    await user.click(screen.getByText('Int'));
+    await waitFor(() => {
+      expect(screen.getByText('Arc')).toBeInTheDocument();
+      expect(screen.getByText('Frostbolt')).toBeInTheDocument();
     });
   });
 

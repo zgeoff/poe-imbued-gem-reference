@@ -11,7 +11,7 @@ export async function buildSearchIndex(
   const searchableSkills: SearchableSkill[] = skills.map((s) => ({
     name: s.name,
     color: s.color,
-    supports: s.supports.join(' '),
+    supports: [...s.supports.red, ...s.supports.green, ...s.supports.blue].join(' '),
   }));
 
   const keys: IFuseOptions<SearchableSkill>['keys'] = [{ name: 'name', weight: 2 }];

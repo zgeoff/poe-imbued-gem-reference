@@ -6,10 +6,15 @@ export const GEM_COLORS: Record<GemColor, string> = {
   blue: '#4169c9',
 };
 
+export interface SupportGem {
+  name: string;
+  color: GemColor;
+}
+
 export interface SkillGem {
   name: string;
   color: GemColor;
-  supports: string[];
+  supports: Record<GemColor, string[]>;
 }
 
 export interface SearchableSkill {
@@ -18,7 +23,7 @@ export interface SearchableSkill {
   supports: string;
 }
 
-export type SortBy = 'name' | 'supports';
+export type SortBy = 'name' | 'red' | 'green' | 'blue';
 export type SortDir = 'asc' | 'desc';
 
-export type GemData = Record<GemColor, Record<string, string[]>>;
+export type GemData = Record<GemColor, Record<string, SupportGem[]>>;

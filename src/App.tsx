@@ -106,6 +106,7 @@ export default function App() {
             isPinned={isPinned}
             onTogglePin={togglePin}
             onUnpin={unpin}
+            colorFilter={colorFilter}
           />
         </main>
       </div>

@@ -70,18 +70,21 @@ describe('App', () => {
     expect(screen.getByText('Multistrike')).toBeInTheDocument();
   });
 
-  it('filters by color when clicking Red, and resets with All', async () => {
+  it('color filter controls which support rows are visible when expanded', async () => {
     const user = userEvent.setup();
     render(<App />);
     await screen.findByText('Arc');
+    // All skills should remain visible regardless of filter
     await user.click(screen.getByText('Str'));
-    // Red skills should be visible
     expect(screen.getByText('Cleave')).toBeInTheDocument();
-    // Blue skills should be hidden
-    expect(screen.queryByText('Arc')).not.toBeInTheDocument();
-    // Reset
+    expect(screen.getByText('Arc')).toBeInTheDocument();
+    // Expand Cleave - should show only red supports when Str filter is active
+    await user.click(screen.getByText('Cleave'));
+    expect(await screen.findByText('Ruthless')).toBeInTheDocument();
+    expect(screen.queryByText('Multistrike')).not.toBeInTheDocument();
+    // Reset to All - green supports should now appear
     await user.click(screen.getByText('All'));
-    expect(await screen.findByText('Arc')).toBeInTheDocument();
+    expect(await screen.findByText('Multistrike')).toBeInTheDocument();
   });
 
   it('shows empty state for nonsense query', async () => {

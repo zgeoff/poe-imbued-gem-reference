@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { PinnedSection } from '@/components/PinnedSection';
 import { SkillRow } from '@/components/SkillRow';
-import type { SkillGem } from '@/types';
+import type { GemColor, SkillGem } from '@/types';
 
 interface SkillListProps {
   skills: SkillGem[];
@@ -11,6 +11,7 @@ interface SkillListProps {
   isPinned: (name: string) => boolean;
   onTogglePin: (name: string) => void;
   onUnpin: (name: string) => void;
+  colorFilter: GemColor | 'all';
 }
 
 export function SkillList({
@@ -21,6 +22,7 @@ export function SkillList({
   isPinned,
   onTogglePin,
   onUnpin,
+  colorFilter,
 }: SkillListProps) {
   const filteredSkills = useMemo(() => skills.filter((s) => !isPinned(s.name)), [skills, isPinned]);
   const hasAnyResults = filteredSkills.length > 0 || pinnedSkills.length > 0;
@@ -35,6 +37,7 @@ export function SkillList({
         isExpanded={isExpanded}
         onToggleExpand={onToggleExpand}
         onUnpin={onUnpin}
+        colorFilter={colorFilter}
       />
       {pinnedSkills.length > 0 && filteredSkills.length > 0 && (
         <div className="border-t border-[#2a2a3a] my-2" />
@@ -53,6 +56,7 @@ export function SkillList({
             onToggleExpand={onToggleExpand}
             isPinned={isPinned(skill.name)}
             onTogglePin={onTogglePin}
+            colorFilter={colorFilter}
           />
         ))
       )}

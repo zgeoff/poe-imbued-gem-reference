@@ -53,8 +53,8 @@ describe('URL Hash', () => {
     render(<App />);
     // Arc should be expanded (support pills visible)
     expect(await screen.findByText('Spell Echo')).toBeInTheDocument();
-    // Should be filtered to blue
-    expect(screen.queryByText('Cleave')).not.toBeInTheDocument();
+    // Color filter no longer hides skills - all skills should be visible
+    expect(screen.getByText('Cleave')).toBeInTheDocument();
     expect(screen.getByText('Arc')).toBeInTheDocument();
   });
 });
